@@ -1,7 +1,7 @@
 import asyncio
 import time
 from functools import partial
-from typing import Coroutine
+from typing import Coroutine, Callable, Any
 import random
 import curses
 
@@ -23,7 +23,7 @@ class SpaceObject:
         self.canvas = canvas
         self.border_limits: tuple = self.canvas.getmaxyx()
 
-    async def animate(self, *args, **kwargs) -> None:
+    async def animate(self, *args: Any, **kwargs: Any) -> None:
         """Method to animate each object."""
         return None
 
@@ -40,7 +40,7 @@ class SkyStar(SpaceObject):
         super().__init__(canvas)
         self.symbols = "+*.:"
 
-    def make_random_coordinates(self) -> tuple[callable, callable]:
+    def make_random_coordinates(self) -> tuple[Callable, Callable]:
         """Make random star coordinates."""
         x, y = tuple(
             partial(random.randint, 1, limit - 2) for limit in self.border_limits
@@ -106,6 +106,21 @@ class SpaceShot(SpaceObject):
         x, y = self.border_limits
         fire_coroutine = self.animate(x - 2, y / 2)
         return [fire_coroutine]
+
+
+class SpaceShip(SpaceObject):
+
+    def __init__(self, canvas):
+        super().__init__(canvas)
+
+    async def animate(self, *args, **kwargs) -> None:
+        """Method to animate each object."""
+        return None
+
+    def create_event_loop(self) -> list[Coroutine]:
+        """Method to create event loop of each space object.
+        It always returns a list with coroutines."""
+        return []
 
 
 class EventLoop:
